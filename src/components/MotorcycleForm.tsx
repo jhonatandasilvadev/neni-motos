@@ -203,7 +203,10 @@ const MotorcycleForm = ({ initialData = {}, onSubmit, isLoading = false }: Motor
         <FormControl>
           <FormLabel>Fotos</FormLabel>
           <ImageUploader
-            images={(values.images ?? []).map((image) => image.image_url)}
+            uploadPath={values.id}
+            images={((values.images ?? []) as Array<{ image_url?: string } | string>)
+              .map((image) => (typeof image === 'string' ? image : image.image_url ?? ''))
+              .filter(Boolean)}
             onAdd={(imageUrl) => {
               setValues((prev) => {
                 const currentImages = prev.images ?? []
@@ -212,7 +215,7 @@ const MotorcycleForm = ({ initialData = {}, onSubmit, isLoading = false }: Motor
                   images: [
                     {
                       id: `${Date.now()}`,
-                      motorcycle_id: prev.id ?? 'new',
+                      motorcycle_id: prev.id ?? crypto.randomUUID(),
                       image_url: imageUrl,
                       sort_order: 1,
                       created_at: new Date().toISOString(),

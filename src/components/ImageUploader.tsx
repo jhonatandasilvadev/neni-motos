@@ -5,11 +5,27 @@ import { uploadImage } from '../services/uploadService'
 
 interface ImageUploaderProps {
   images: string[]
+  uploadPath?: string
   onAdd: (imageUrl: string) => void
   onRemove: (imageUrl: string) => void
 }
 
-const ImageUploader = ({ images, onAdd, onRemove }: ImageUploaderProps) => {
+const formatError = (error: unknown) => {
+  const anyError = error as any
+
+  if (!error) return 'Erro desconhecido.'
+
+  const parts: string[] = []
+
+  if (typeof anyError.message === 'string') parts.push(anyError.message)
+  if (anyError.code) parts.push(`Código: ${anyError.code}`)
+  if (anyError.details) parts.push(`Detalhes: ${anyError.details}`)
+  if (anyError.hint) parts.push(`Hint: ${anyError.hint}`)
+
+  return parts.length > 0 ? parts.join(' | ') : String(error)
+}
+
+const ImageUploader = ({ images, uploadPath, onAdd, onRemove }: ImageUploaderProps) => {
   const [uploading, setUploading] = useState(false)
   const toast = useToast()
   const dropRef = useRef<HTMLDivElement | null>(null)
@@ -29,20 +45,31 @@ const ImageUploader = ({ images, onAdd, onRemove }: ImageUploaderProps) => {
 
     setUploading(true)
     try {
-      const uploads = await Promise.all(valid.map(async (file) => {
-        try {
-          const url = await uploadImage(file)
-          return url
-        } catch (err) {
-          return null
-        }
-      }))
+      const results = await Promise.allSettled(valid.map((file) => uploadImage(file, uploadPath)))
 
-      for (const url of uploads) {
-        if (url) onAdd(url)
+      const uploadedUrls = results
+        .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')
+        .map((result) => result.value)
+
+      const uploadErrors = results
+        .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+        .map((result) => result.reason)
+
+      uploadedUrls.forEach(onAdd)
+
+      if (uploadedUrls.length > 0) {
+        toast({ title: `${uploadedUrls.length} arquivo(s) enviado(s).`, status: 'success', duration: 2000, isClosable: true })
       }
 
-      toast({ title: `${uploads.filter(Boolean).length} arquivo(s) enviado(s).`, status: 'success', duration: 2000, isClosable: true })
+      if (uploadErrors.length > 0) {
+        toast({
+          title: 'Erro ao enviar imagem(s).',
+          description: formatError(uploadErrors[0]),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        })
+      }
     } finally {
       setUploading(false)
     }
