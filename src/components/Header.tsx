@@ -102,7 +102,6 @@ const Header = ({ onOpenFilters }: HeaderProps) => {
           </Box>
           <Box ml={3}>
             <Text fontWeight="black" letterSpacing="tight">Neni Motos</Text>
-            <Text fontSize="xs" color={useColorModeValue('gray.500', 'whiteAlpha.700')}>Joinville • Premium</Text>
           </Box>
         </ChakraLink>
 

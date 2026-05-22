@@ -70,9 +70,21 @@ const MotorcycleCard = ({ motorcycle }: MotorcycleCardProps) => {
       </Box>
 
       <Stack spacing={4} p={6}>
-        <Text color="brand.500" textTransform="uppercase" fontSize="xs" letterSpacing="widest">
+        <Badge
+          colorScheme="yellow"
+          variant="solid"
+          textTransform="uppercase"
+          fontSize="md"
+          fontWeight="bold"
+          letterSpacing="widest"
+          px={5}
+          py={2}
+          borderRadius="full"
+          alignSelf="flex-start"
+          color="white"
+        >
           {motorcycle.brand}
-        </Text>
+        </Badge>
         <Heading size="md" color={textColor} lineHeight="1.1">
           {motorcycle.model}
         </Heading>

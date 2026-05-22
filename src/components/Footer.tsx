@@ -40,7 +40,7 @@ const Footer = () => {
             </Button>
           </Stack>
 
-          <Stack spacing={4}>
+          <Stack spacing={4} align="flex-end">
             <Text fontWeight="semibold">Siga-nos</Text>
             <Stack direction="row" spacing={3} align="center">
               <IconButton
@@ -68,12 +68,21 @@ const Footer = () => {
             </Flex>
           </Stack>
         </Flex>
-        <Flex justify="space-between" align="center" pt={8} borderTop="1px solid" borderColor={border}>
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          justify="space-between"
+          align={{ base: 'flex-start', md: 'center' }}
+          gap={3}
+          mt={8}
+          pt={8}
+          borderTop="1px solid"
+          borderColor={border}
+        >
           <Text fontSize="sm" color={secondaryColor}>
-            © {new Date().getFullYear()} Neni Motos. Concessionária moderna em Joinville.
+            © {new Date().getFullYear()} Neni Motos. Todos os direitos reservados.
           </Text>
           <Text fontSize="sm" color={secondaryColor}>
-            Desenvolvido para catálogo premium de motos.
+            Desenvolvido por DS Devforge.
           </Text>
         </Flex>
       </Container>
